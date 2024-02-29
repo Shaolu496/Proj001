@@ -1,0 +1,99 @@
+{% extends "base.html"%} {% block content%}
+<div id="cash-info">
+  <h2>現金庫存</h2>
+  <table class="table table-bordered">
+    <tr>
+      <td>台幣總額: {{data['twd']}}元</td>
+      <td>美金總額: {{data['usd']}}元</td>
+      <td>今日匯率(出處:全球即時匯率API|RETR.info):{{data['currency']}}</td>
+      <td>資產總額: {{data['total']}}元</td>
+    </tr>
+  </table>
+
+  <h4>現金更動紀錄</h4>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">TWD</th>
+        <th scope="col">USD</th>
+        <th scope="col">Note</th>
+        <th scope="col">Time</th>
+        <th scope="col">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for data in data['cash_result'] %}
+      <tr>
+        <td>{{data[0]}}</td>
+        <td>{{data[1]}}</td>
+        <td>{{data[2]}}</td>
+        <td>{{data[3]}}</td>
+        <td>{{data[4]}}</td>
+        <td>
+          <form action="cash-delete" method="post">
+            <input type="hidden" name="id" value="{{data[0]}}" />
+            <button class="btn btn-primary">刪除資料</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<hr />
+
+<div id="stock-info">
+  <h2>股票庫存</h2>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th scope="col">股票代號</th>
+        <th scope="col">持有股數</th>
+        <th scope="col">目前股價</th>
+        <th scope="col">目前市值</th>
+        <th scope="col">股票資產占比(%)</th>
+        <th scope="col">購買總成本(含手續費)</th>
+        <th scope="col">平均成本</th>
+        <th scope="col">報酬率(%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in data['stock_info']%}
+      <tr>
+        <td>{{d['stock_id']}}</td>
+        <td>{{d['shares']}}</td>
+        <td>{{d['current_price']}}</td>
+        <td>{{d['total_value']}}</td>
+        <td>{{d['value_percentage']}}</td>
+        <td>{{d['stock_cost']}}</td>
+        <td>{{d['average_cost']}}</td>
+        <td>{{d['rate_of_return']}}</td>
+        <td>
+          <form action="stock-delete" method="post">
+            <input type="hidden" name="sid" value="{{d['stock_id']}}" />
+            <button class="btn btn-primary">刪除資料</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div id="chart" style="display: flex; flex-wrap: wrap">
+  {% if data['show_pic1']%}
+  <figure style="flex: 0 1 500px; margin: 10px">
+    <figcaption>股票佔比圖</figcaption>
+    <img style="width: 100%" src="static/piechart.jpg" alt="股票佔比圖" />
+  </figure>
+  {% endif%} {% if data['show_pic2']%}
+  <figure style="flex: 0 1 500px; margin: 10px">
+    <figcaption>資產佔比圖</figcaption>
+    <img style="width: 100%" src="static/piechart2.jpg" alt="資產佔比圖" />
+  </figure>
+  {% endif%}
+</div>
+
+{%endblock%}
